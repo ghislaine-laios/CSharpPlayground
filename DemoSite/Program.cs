@@ -24,6 +24,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddSingleton(configuration.Get<ApplicationInfoConfig>()!);
+builder.Services.AddSingleton(configuration.GetRequiredSection("DataPath").Get<DataPathOptions>()!);
+builder.Services.AddSingleton<DataPathConfig>();
+
 builder.Services.AddScoped<IUserRegisterService, UserRegisterService>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
