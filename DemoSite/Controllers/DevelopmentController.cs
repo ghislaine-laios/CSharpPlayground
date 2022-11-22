@@ -16,7 +16,8 @@ public class DevelopmentController : ControllerBase
         {
             file,
             config.FilesHostingPath,
-            FullPath = config.FilesHostingDirectory.FullName
+            FullPath = config.FilesHostingDirectory.FullName,
+            DemoGuid = Guid.NewGuid().ToString(),
         };
     }
 

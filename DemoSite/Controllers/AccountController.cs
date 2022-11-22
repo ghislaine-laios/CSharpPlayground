@@ -1,12 +1,15 @@
 ﻿using System.Security.Claims;
 using DemoSite.Exceptions;
-using DemoSite.Models;
+using DemoSite.Models.Domain;
+using DemoSite.Models.DTO;
 using DemoSite.Ports;
+using DemoSite.Services.File;
 using DemoSite.Services.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Multiformats.Hash.Algorithms;
 
 namespace DemoSite.Controllers;
 
@@ -18,13 +21,14 @@ public class AccountController : ControllerBase
     public async Task<object> Login([FromBody] BaseUserPayload payload,
         IUserAuthenticationService authenticationService)
     {
-        var success = await authenticationService.Execute(payload);
+        var (success, id) = await authenticationService.Execute(payload);
         if (!success)
             return this.Error(new HttpResponseException("Username or password is incorrect.",
                 StatusCodes.Status401Unauthorized));
         var claimsIdentity = new ClaimsIdentity(new List<Claim>
         {
-            new(ClaimTypes.Name, payload.Username)
+            new(ClaimTypes.Name, payload.Username),
+            new("id", id.ToString()),
         }, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties { IsPersistent = true };
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -63,10 +67,22 @@ public class AccountController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("Avatar/File")]
-    public object PostAvatar()
+    [HttpGet("Avatar")]
+    public async Task<object> GetAvatar(IAvatarQueryService queryService)
     {
-        return new { };
+        var id = this.GetUserId();
+        var result = await queryService.Get(id);
+        if (result == null) return NotFound();
+        return File(result.Content, result.ContentType);
+    }
+
+    [Authorize]
+    [HttpPost("Avatar/File")]
+    public async Task<object> PostAvatar(IFormFile file, IAvatarStoreService storeService)
+    {
+        var id = this.GetUserId();
+        var uuid = await storeService.Execute(id, file);
+        return CreatedAtAction(nameof(GetAvatar), new { Id = uuid });
     }
 
     public class UserResponse

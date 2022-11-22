@@ -1,5 +1,8 @@
-﻿using DemoSite.Models;
+﻿using DemoSite.Models.Domain;
+using DemoSite.Models.DTO;
 using DemoSite.Ports;
+using DemoSite.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace DemoSite.Services.User;
 
@@ -14,13 +17,19 @@ public interface IUserRegisterService
 
 public class UserRegisterService : UserServiceBase, IUserRegisterService
 {
-    public UserRegisterService(IUserRepository repo) : base(repo)
+    public UserRegisterService(IUserRepository repo, ApplicationDbContext context) : base(repo, context)
     {
     }
 
     public async Task<long> Execute(FullUserPayload payload)
     {
+        return await WithTransaction(_ => ExecuteWithoutTransaction(payload));
+    }
+
+    private async Task<long> ExecuteWithoutTransaction(FullUserPayload payload)
+    {
         var user = payload.ToUser();
-        return await _repo.Export(user);
+        return await Repo.Export(user);
+
     }
 }

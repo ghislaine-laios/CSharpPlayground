@@ -22,7 +22,26 @@ namespace DemoSite.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DemoSite.Models.User", b =>
+            modelBuilder.Entity("DemoSite.Models.Domain.File", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("DemoSite.Models.Domain.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +70,7 @@ namespace DemoSite.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DemoSite.Models.UserData", b =>
+            modelBuilder.Entity("DemoSite.Models.Domain.UserData", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,8 +78,8 @@ namespace DemoSite.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("AvatarId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -76,9 +95,18 @@ namespace DemoSite.Migrations
                     b.ToTable("UserData");
                 });
 
-            modelBuilder.Entity("DemoSite.Models.User", b =>
+            modelBuilder.Entity("DemoSite.Models.Domain.File", b =>
                 {
-                    b.HasOne("DemoSite.Models.UserData", "UserData")
+                    b.HasOne("DemoSite.Models.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DemoSite.Models.Domain.User", b =>
+                {
+                    b.HasOne("DemoSite.Models.Domain.UserData", "UserData")
                         .WithMany()
                         .HasForeignKey("UserDataId")
                         .OnDelete(DeleteBehavior.Cascade)

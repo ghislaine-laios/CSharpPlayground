@@ -1,22 +1,23 @@
-﻿using DemoSite.Models;
+﻿using DemoSite.Models.DTO;
 using DemoSite.Ports;
+using DemoSite.Repositories;
 
 namespace DemoSite.Services.User;
 
 public interface IUserAuthenticationService
 {
-    Task<bool> Execute(BaseUserPayload payload);
+    Task<(bool, long)> Execute(BaseUserPayload payload);
 }
 
 public class UserAuthenticationService : UserServiceBase, IUserAuthenticationService
 {
-    public UserAuthenticationService(IUserRepository repo) : base(repo)
+    public UserAuthenticationService(IUserRepository repo, ApplicationDbContext context) : base(repo, context)
     {
     }
 
-    public async Task<bool> Execute(BaseUserPayload payload)
+    public async Task<(bool, long)> Execute(BaseUserPayload payload)
     {
-        var actualUser = await _repo.Import(payload.Username);
-        return actualUser.ValidatePassword(payload.Password);
+        var actualUser = await Repo.Import(payload.Username);
+        return (actualUser.ValidatePassword(payload.Password), actualUser.Id);
     }
 }

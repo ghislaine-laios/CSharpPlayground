@@ -1,13 +1,14 @@
 ﻿using DemoSite.Ports;
+using DemoSite.Repositories;
 
 namespace DemoSite.Services.User;
 
-public class UserServiceBase
+public class UserServiceBase: DbContextServiceBase
 {
-    protected readonly IUserRepository _repo;
+    protected readonly IUserRepository Repo;
 
-    public UserServiceBase(IUserRepository repo)
+    public UserServiceBase(IUserRepository repo, ApplicationDbContext context) : base(context)
     {
-        _repo = repo;
+        Repo = repo;
     }
 }

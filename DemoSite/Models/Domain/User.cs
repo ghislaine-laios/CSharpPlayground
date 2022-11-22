@@ -1,53 +1,16 @@
-﻿using DemoSite.Exceptions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using DemoSite.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Multiformats.Base;
 using Multiformats.Hash;
 
-namespace DemoSite.Models;
-
-public class BaseUserPayload
-{
-    public required string Username { get; init; }
-    public required string Password { get; init; }
-
-    public User ToUser(UserData userData)
-    {
-        var user = new User { Username = Username, UserData = userData };
-        user.SetPassword(Password);
-        return user;
-    }
-}
-
-public class FullUserPayload : BaseUserPayload
-{
-    public required UserDataPayload UserData { get; init; }
-
-    public User ToUser()
-    {
-        var now = DateTime.UtcNow;
-        return ToUser(new UserData { Id = 0, Avatar = UserData.Avatar, Email = UserData.Email, RegisterDate = now });
-    }
-
-    public static FullUserPayload From(User user)
-    {
-        return new FullUserPayload
-            { Password = "", Username = user.Username, UserData = UserDataPayload.From(user.UserData) };
-    }
-}
+namespace DemoSite.Models.Domain;
 
 [Index(nameof(Email), IsUnique = true)]
 public class UserDataBase
 {
-    public string? Avatar { get; set; }
+    public Guid? AvatarId { get; set; }
     public string? Email { get; set; }
-}
-
-public class UserDataPayload : UserDataBase
-{
-    public static UserDataPayload From(UserData userData)
-    {
-        return new UserDataPayload { Avatar = userData.Avatar, Email = userData.Email };
-    }
 }
 
 public class UserData : UserDataBase

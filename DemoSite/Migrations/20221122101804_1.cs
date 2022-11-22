@@ -19,7 +19,7 @@ namespace DemoSite.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RegisterDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Avatar = table.Column<string>(type: "text", nullable: true),
+                    AvatarId = table.Column<Guid>(type: "uuid", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -48,6 +48,36 @@ namespace DemoSite.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    ContentType = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Files_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_UserId",
+                table: "Files",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserData_Email",
+                table: "UserData",
+                column: "Email",
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserDataId",
                 table: "Users",
@@ -63,6 +93,9 @@ namespace DemoSite.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Files");
+
             migrationBuilder.DropTable(
                 name: "Users");
 
