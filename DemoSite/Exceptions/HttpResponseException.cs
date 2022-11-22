@@ -2,11 +2,16 @@
 
 public class HttpResponseException : Exception
 {
-    public int Code { get; }
-
     public HttpResponseException(string message, int code) : base(message)
     {
         Code = code;
+    }
+
+    public int Code { get; }
+
+    public Data ToDataObject()
+    {
+        return new Data { Code = Code, Message = Message };
     }
 
     public class Data
@@ -14,6 +19,4 @@ public class HttpResponseException : Exception
         public required int Code { get; init; }
         public required string Message { get; init; }
     }
-
-    public Data ToDataObject() => new Data { Code = Code, Message = Message };
 }

@@ -1,34 +1,43 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.IdentityModel.Tokens;
+﻿using System.Reflection;
 
-namespace DemoSite.Configurations
+namespace DemoSite.Configurations;
+
+public class DataPathOptions
 {
-    public class DataPathOptions
-    {
-        public string? FileHosting { get; set; }
-    }
+    public string? FilesHosting { get; set; }
+}
 
-    public class DataPathConfig
-    {
-        private DataPathOptions _dataPathOptions;
+public class DataPathConfig
+{
+    private const string FileHostingSubDir = "Uploads";
 
-        private const string FileHostingSubDir = "Uploads";
-        public string FileHostingPath { get; }
-        public DataPathConfig(DataPathOptions dataPathOptions, IWebHostEnvironment environment, ApplicationInfoConfig applicationInfo)
+    public DataPathConfig(DataPathOptions dataPathOptions, IWebHostEnvironment environment,
+        ApplicationInfoConfig applicationInfo)
+    {
+        if (environment.IsDevelopment())
         {
-            _dataPathOptions = dataPathOptions;
-            if (!String.IsNullOrEmpty(dataPathOptions.FileHosting))
-            {
-                FileHostingPath = dataPathOptions.FileHosting;
-                return;
-            }
-            
+            var binPath = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+            Directory.SetCurrentDirectory(binPath);
+        }
+
+        if (!string.IsNullOrEmpty(dataPathOptions.FilesHosting))
+        {
+            FilesHostingPath = dataPathOptions.FilesHosting;
+        }
+        else
+        {
             // If not specified, use the default path.
             if (OperatingSystem.IsWindows())
-                FileHostingPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), applicationInfo.ApplicationName, FileHostingSubDir);
+                FilesHostingPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    applicationInfo.ApplicationName, FileHostingSubDir);
             else if (OperatingSystem.IsLinux())
-                FileHostingPath = Path.Join("/srv", applicationInfo.ApplicationName, FileHostingSubDir);
+                FilesHostingPath = Path.Join("/srv", applicationInfo.ApplicationName, FileHostingSubDir);
             else throw new NotImplementedException();
         }
+
+        FilesHostingDirectory = Directory.CreateDirectory(FilesHostingPath);
     }
+
+    public string FilesHostingPath { get; }
+    public DirectoryInfo FilesHostingDirectory { get; }
 }

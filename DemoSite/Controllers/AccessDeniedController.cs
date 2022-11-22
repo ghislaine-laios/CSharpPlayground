@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DemoSite.Controllers
+namespace DemoSite.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AccessDeniedController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AccessDeniedController : ControllerBase
+    [HttpGet]
+    public string Get()
     {
-        [HttpGet]
-        public string Get()
-        {
-            return "Access Denied.";
-        }
+        return "Access Denied.";
     }
 }

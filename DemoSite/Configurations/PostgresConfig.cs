@@ -1,16 +1,14 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿namespace DemoSite.Configurations;
 
-namespace DemoSite.Configurations
+public class PostgresConfig
 {
-    public class PostgresConfig
-    {
-        public required string Host { get; set; }
-        public required string Database { get; set; }
-        public required string Username { get; set; }
-        public required string Password { get; set; }
+    public required string Host { get; set; }
+    public required string Database { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 
-        public required string IncludeErrorDetail { get; set; }
+    public required string IncludeErrorDetail { get; set; }
 
-        public string ConnectionString => $"Host={Host};Database={Database};Username={Username};Password={Password};Include Error Detail={IncludeErrorDetail}";
-    }
+    public string ConnectionString =>
+        $"Host={Host};Database={Database};Username={Username};Password={Password};Include Error Detail={IncludeErrorDetail}";
 }

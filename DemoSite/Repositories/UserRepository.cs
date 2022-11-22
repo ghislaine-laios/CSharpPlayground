@@ -14,6 +14,7 @@ public class UserRepository : IUserRepository
     {
         _dbContext = dbContext;
     }
+
     public async Task<User> Import(long id)
     {
         return await _dbContext.Users.SingleAsync(u => u.Id == id);
@@ -36,8 +37,6 @@ public class UserRepository : IUserRepository
         return user.Id;
     }
 
-    protected delegate Task WithTransactionDelegate(IDbContextTransaction transaction);
-
     protected async Task WithTransaction(WithTransactionDelegate func)
     {
         var strategy = _dbContext.Database.CreateExecutionStrategy();
@@ -49,4 +48,6 @@ public class UserRepository : IUserRepository
             await transaction.CommitAsync();
         });
     }
+
+    protected delegate Task WithTransactionDelegate(IDbContextTransaction transaction);
 }

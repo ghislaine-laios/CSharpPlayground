@@ -15,7 +15,8 @@ namespace DemoSite.Controllers;
 public class AccountController : ControllerBase
 {
     [HttpPost("Login")]
-    public async Task<object> Login([FromBody] BaseUserPayload payload, IUserAuthenticationService authenticationService)
+    public async Task<object> Login([FromBody] BaseUserPayload payload,
+        IUserAuthenticationService authenticationService)
     {
         var success = await authenticationService.Execute(payload);
         if (!success)
@@ -23,7 +24,7 @@ public class AccountController : ControllerBase
                 StatusCodes.Status401Unauthorized));
         var claimsIdentity = new ClaimsIdentity(new List<Claim>
         {
-            new Claim(ClaimTypes.Name, payload.Username)
+            new(ClaimTypes.Name, payload.Username)
         }, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties { IsPersistent = true };
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -56,9 +57,16 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<object> GetAccount(IUserRepository repository)
     {
-        var principal = this.User;
+        var principal = User;
         var username = principal.Identity!.Name!;
         return UserResponse.From(await repository.Import(username));
+    }
+
+    [Authorize]
+    [HttpPost("Avatar/File")]
+    public object PostAvatar()
+    {
+        return new { };
     }
 
     public class UserResponse
@@ -75,12 +83,5 @@ public class AccountController : ControllerBase
         {
             return new UserResponse { Username = user.Username, UserData = UserDataPayload.From(user.UserData) };
         }
-    }
-
-    [Authorize]
-    [HttpPost("Avatar/File")]
-    public object PostAvatar()
-    {
-        return new { };
     }
 }

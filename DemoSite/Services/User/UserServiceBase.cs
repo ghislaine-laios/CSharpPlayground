@@ -1,14 +1,13 @@
 ﻿using DemoSite.Ports;
 
-namespace DemoSite.Services.User
-{
-    public class UserServiceBase
-    {
-        protected readonly IUserRepository _repo;
+namespace DemoSite.Services.User;
 
-        public UserServiceBase(IUserRepository repo)
-        {
-            _repo = repo;
-        }
+public class UserServiceBase
+{
+    protected readonly IUserRepository _repo;
+
+    public UserServiceBase(IUserRepository repo)
+    {
+        _repo = repo;
     }
 }

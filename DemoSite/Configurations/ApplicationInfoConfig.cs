@@ -1,7 +1,6 @@
-﻿namespace DemoSite.Configurations
+﻿namespace DemoSite.Configurations;
+
+public class ApplicationInfoConfig
 {
-    public class ApplicationInfoConfig
-    {
-        public required string ApplicationName { get; set; }
-    }
+    public required string ApplicationName { get; set; }
 }
