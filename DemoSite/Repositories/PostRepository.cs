@@ -12,14 +12,14 @@ namespace DemoSite.Repositories
         {
         }
 
-        public async Task<Post> Import(long id)
+        public async Task<Post?> Import(long id)
         {
-            return await DbContext.Posts.SingleAsync(p => p.Id == id);
+            return await DbContext.Posts.SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IList<Post>> Import(TimeDescendingPostsQuery query)
         {
-            IQueryable<Post> a = DbContext.Posts.OrderByDescending(p => p.Id);
+            IQueryable<Post> a = DbContext.Posts.OrderByDescending(p => p.CreatedTime);
             if (query.StartTime is not null)
             {
                 a = a.Where(p => p.CreatedTime < query.StartTime);

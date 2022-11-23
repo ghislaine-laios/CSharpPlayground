@@ -23,4 +23,9 @@ namespace DemoSite.Models.Domain
     {
         public PostConflictException(string message = "The user already has a post with the same title."): base(message) { }
     }
+
+    public class PostNotFoundException : Exception
+    {
+        public PostNotFoundException(string message = "The requested post is not found."): base(message) { }
+    }
 }

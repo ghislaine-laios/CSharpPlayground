@@ -29,7 +29,10 @@ namespace DemoSite.Controllers
         [HttpGet("{postId}")]
         public async Task<object> GetPost(long postId)
         {
-            return await _repository.Import(postId);
+            var result =  await _repository.Import(postId);
+            if (result is null) return NotFound();
+            return Ok(result);
+
         }
 
         [Authorize]
@@ -59,6 +62,10 @@ namespace DemoSite.Controllers
                 await updatePostService.Execute(userId,
                     new PostPayloadWithId { Id = postId, Title = payload.Title, Content = payload.Content });
                 return NoContent();
+            }
+            catch (PostNotFoundException)
+            {
+                return NotFound();
             }
             catch (PostNotBelongToThisUserException e)
             {

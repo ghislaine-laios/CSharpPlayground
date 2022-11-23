@@ -1,4 +1,5 @@
-﻿using DemoSite.Models.DTO;
+﻿using DemoSite.Models.Domain;
+using DemoSite.Models.DTO;
 using DemoSite.Ports;
 using DemoSite.Repositories;
 
@@ -20,12 +21,13 @@ namespace DemoSite.Services.Post
         {
             await WithTransaction(async _ =>
             {
-                var post = await _postRepository.Import(payload.Id);
-                if (post.UserId != userId) throw new PostNotBelongToThisUserException();
+                var post = await PostRepository.Import(payload.Id);
+                if (post is null) throw new PostConflictException();
+                    if (post.UserId != userId) throw new PostNotBelongToThisUserException();
                 post.Title = payload.Title;
                 post.Content = payload.Content;
                 post.LastUpdatedTime = DateTime.UtcNow;
-                await _postRepository.Update(post);
+                await PostRepository.Update(post);
                 return "";
             });
         }

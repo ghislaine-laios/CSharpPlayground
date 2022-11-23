@@ -21,7 +21,7 @@ namespace DemoSite.Services.Post
             return await WithTransaction(async _ =>
             {
                 var newPost = payload.ToPost(userId);
-                return await _postRepository.Export(newPost);
+                return await PostRepository.Export(newPost);
             });
         }
     }

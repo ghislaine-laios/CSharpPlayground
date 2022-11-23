@@ -24,10 +24,8 @@ public class DevelopmentController : ControllerBase
     [HttpPost("Raw")]
     public async Task<object> EchoRaw()
     {
-        using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
-        {
-            return await reader.ReadToEndAsync();
-        }
+        using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+        return await reader.ReadToEndAsync();
     }
 
     [HttpPost("Debug/FolderPath")]
