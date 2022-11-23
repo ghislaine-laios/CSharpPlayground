@@ -11,6 +11,7 @@ namespace DemoSite.Services.File
     {
         Task<string> Execute(long userId, IFormFile file);
     }
+
     public class AvatarStoreService : FileServiceBase, IAvatarStoreService
     {
         private static readonly Regex ContentTypeRegex = new Regex(@"^image\/*");

@@ -2,6 +2,7 @@ using DemoSite.Configurations;
 using DemoSite.Ports;
 using DemoSite.Repositories;
 using DemoSite.Services.File;
+using DemoSite.Services.Post;
 using DemoSite.Services.User;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFileEntryRepository, FileEntryRepository>();
 builder.Services.AddScoped<IFileRepository, LocalFileRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 builder.Services.AddSingleton(configuration.Get<ApplicationInfoConfig>()!);
 builder.Services.AddSingleton(configuration.GetRequiredSection("DataPath").Get<DataPathOptions>()!);
@@ -35,6 +37,7 @@ builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService
 builder.Services.AddScoped<FileServiceBaseDependency>();
 builder.Services.AddScoped<IAvatarQueryService, AvatarQueryService>();
 builder.Services.AddScoped<IAvatarStoreService, AvatarStoreService>();
+builder.Services.AddScoped<ICreatePostService, CreatePostService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
