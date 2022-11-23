@@ -38,6 +38,7 @@ builder.Services.AddScoped<FileServiceBaseDependency>();
 builder.Services.AddScoped<IAvatarQueryService, AvatarQueryService>();
 builder.Services.AddScoped<IAvatarStoreService, AvatarStoreService>();
 builder.Services.AddScoped<ICreatePostService, CreatePostService>();
+builder.Services.AddScoped<IUpdatePostService, UpdatePostService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

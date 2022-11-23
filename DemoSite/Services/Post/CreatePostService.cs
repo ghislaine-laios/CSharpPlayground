@@ -9,12 +9,11 @@ namespace DemoSite.Services.Post
         Task<long> Execute(long userId, PostPayload payload);
     }
 
-    public class CreatePostService: DbContextServiceBase, ICreatePostService
+    public class CreatePostService: PostServiceBase, ICreatePostService
     {
-        private readonly IPostRepository _postRepository;
-        public CreatePostService(IPostRepository postRepository, ApplicationDbContext context) : base(context)
+        public CreatePostService(ApplicationDbContext dbContext, IPostRepository postRepository)
+            : base(dbContext, postRepository)
         {
-            _postRepository = postRepository;
         }
 
         public async Task<long> Execute(long userId, PostPayload payload)

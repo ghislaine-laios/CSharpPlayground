@@ -42,11 +42,27 @@ namespace DemoSite.Controllers
                 var postId = await createPostService.Execute(userId, payload);
                 var result = new { postId };
                 return CreatedAtAction(nameof(GetPost), result, result);
-
             }
             catch (PostConflictException e)
             {
                 return this.Error(new HttpResponseException(e.Message, StatusCodes.Status409Conflict));
+            }
+        }
+
+        [Authorize]
+        [HttpPut("{postId}")]
+        public async Task<object> UpdatePost([FromBody] PostPayload payload, long postId, IUpdatePostService updatePostService)
+        {
+            try
+            {
+                var userId = this.GetUserId();
+                await updatePostService.Execute(userId,
+                    new PostPayloadWithId { Id = postId, Title = payload.Title, Content = payload.Content });
+                return NoContent();
+            }
+            catch (PostNotBelongToThisUserException e)
+            {
+                return this.Error(new HttpResponseException(e.Message, StatusCodes.Status403Forbidden));
             }
         }
     }

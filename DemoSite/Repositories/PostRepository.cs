@@ -2,6 +2,7 @@
 using DemoSite.Models.DTO;
 using DemoSite.Ports;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace DemoSite.Repositories
 {
@@ -28,11 +29,23 @@ namespace DemoSite.Repositories
 
         public async Task<long> Export(Post post)
         {
-            var anyPost = await DbContext.Posts.AnyAsync(p => p.UserId == post.UserId && p.Title == post.Title);
-            if (anyPost) throw new PostConflictException();
+            await CheckPostTitle(post);
             DbContext.Posts.Add(post);
             await DbContext.SaveChangesAsync();
             return post.Id;
+        }
+
+        public async Task Update(Post post)
+        {
+            await CheckPostTitle(post);
+            DbContext.Posts.Update(post);
+            await DbContext.SaveChangesAsync();
+        }
+
+        private async Task CheckPostTitle(Post post)
+        {
+            var anyPost = await DbContext.Posts.AnyAsync(p => p.UserId == post.UserId && p.Title == post.Title && p.Id != post.Id);
+            if (anyPost) throw new PostConflictException();
         }
     }
 }
