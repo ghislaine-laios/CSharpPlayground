@@ -11,6 +11,6 @@ public class CommentPayload
 
     public Comment ToComment(long userId)
     {
-        return new Comment { PostId = userId, Content = Content, CreatedTime = DateTime.UtcNow, SenderId = userId};
+        return new Comment { PostId = PostId, Content = Content, CreatedTime = DateTime.UtcNow, SenderId = userId};
     }
 }
